@@ -27,6 +27,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  var wallpaper;
+
   _getList() async {
     List<dynamic> apps = await DeviceApps.getInstalledApplications(
         includeAppIcons: true,
@@ -52,9 +54,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
-  void initStat() {
+  initState() {
     super.initState();
-    requestPermission();
+    LauncherAssist.getWallpaper().then((image) {
+      setState(() {
+        wallpaper = image;
+      });
+    });
   }
 
   @override
@@ -63,6 +69,14 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         body: Stack(
       children: <Widget>[
+        wallpaper != null
+            ? Image.memory(
+                wallpaper,
+                fit: BoxFit.cover,
+                height: double.infinity,
+                width: double.infinity,
+              )
+            : Center(),
         FutureBuilder(
           future: _getList(),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
